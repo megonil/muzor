@@ -1,0 +1,4 @@
+fn main | World | is
+  if true 
+    then 10
+    else 20

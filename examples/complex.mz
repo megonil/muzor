@@ -1,0 +1,7 @@
+fn myReadFile | Filesystem | for filename is
+  let file = Filesystem.open filename
+  Filesystem.contents file
+
+fn main | Io, World | is
+  let contents = myReadFile "file.something"
+  Io.puts contents
