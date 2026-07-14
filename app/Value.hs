@@ -3,6 +3,7 @@
 module Value where
 
 import Data.Text (Text)
+import Numeric
 import Text.Printf
 
 type MzInt = Integer
@@ -12,7 +13,7 @@ data Value = Int MzInt | FloatPoint MzFloat | String Text | CharLit Char | Boole
 
 showValue :: Value -> String
 showValue (Int x) = show x
-showValue (FloatPoint x) = show x
+showValue (FloatPoint x) = showFFloat (Nothing) x ""
 showValue (String s) = show s
 showValue (CharLit c) = show c
 showValue (Boolean b) = printf "%s" (if b then "true" else "false")

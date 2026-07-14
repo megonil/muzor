@@ -1,6 +1,7 @@
 module Error where
 
 import Control.Monad.Except
+import System.Console.ANSI
 import Value
 
 data MzError = TypeMismatch String Value | WrongOperands String [Value] | CannotDivideBy0 [Value]
@@ -14,7 +15,7 @@ showMzError (WrongOperands to operands) = "Wrong operands to " <> to <> " operat
 showMzError (CannotDivideBy0 found) = "Cannot divide by 0 in " <> show (found !! 0) <> "/" <> show (found !! 1)
 
 instance Show MzError where
-  show = showMzError
+  show e = setSGRCode [SetColor Foreground Vivid Red] <> showMzError e <> setSGRCode [Reset]
 
 type Throws = Either MzError
 

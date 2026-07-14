@@ -52,7 +52,14 @@ parseChar :: Parser Expr
 parseChar = Char <$> lexeme (between (char '\'') (char '\'') L.charLiteral)
 
 parseTerm :: Parser Expr
-parseTerm = choice [parens parseExpr, parseString, parseNumber, parseIdentifier]
+parseTerm =
+  choice
+    [ parens parseExpr
+    , parseString
+    , parseChar
+    , parseNumber
+    , parseIdentifier
+    ]
 
 binary :: Text -> (Expr -> Expr -> Expr) -> Operator Parser Expr
 binary name f = InfixL (f <$ symbol name)

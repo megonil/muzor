@@ -1,5 +1,10 @@
 # Revision history for muzor
 
+## 0.1.4 -- 2026-7-14
+
+* Error coloring. Better float point numbers printing
+* Bug fixes: char parsing, argument list indexing
+
 ## 0.1.3 -- 2026-7-14
 
 * Error handling, String multiplication
