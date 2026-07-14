@@ -1,21 +1,29 @@
 module Eval where
 
 import Ast
-import Value
+import Error
+import Operate
+import Value (Value (Boolean, CharLit, FloatPoint, Int, String))
 
-eval :: Expr -> Value
-eval (Integer x) = Int x
-eval (FloatLit x) = FloatPoint x
-eval (StringLit s) = String s
-eval (Char c) = CharLit c
-eval (Bool b) = Boolean b
-eval (Negation n) = negateValue (eval n)
-eval (Not n) = notValue (eval n)
-eval (Add l r) = addValues (eval l) (eval r)
-eval (Sub l r) = subValues (eval l) (eval r)
-eval (Mul l r) = mulValues (eval l) (eval r)
-eval (Div l r) = divValues (eval l) (eval r)
-eval (Pow l r) = powValues (eval l) (eval r)
-eval (Mod l r) = modValues (eval l) (eval r)
-eval (Concat l r) = concatValues (eval l) (eval r)
-eval (Id x) = String x
+liftUnary :: (Value -> Throws Value) -> Expr -> Throws Value
+liftUnary f e = eval e >>= f
+
+liftBinary :: (Value -> Value -> Throws Value) -> Expr -> Expr -> Throws Value
+liftBinary f l r = liftA2 f (eval l) (eval r) >>= id
+
+eval :: Expr -> Throws Value
+eval (Integer x) = pure $ Int x
+eval (FloatLit x) = pure $ FloatPoint x
+eval (StringLit s) = pure $ String s
+eval (Char c) = pure $ CharLit c
+eval (Bool b) = pure $ Boolean b
+eval (Id x) = pure $ String x
+eval (Negation n) = liftUnary negateValue n
+eval (Not n) = liftUnary notValue n
+eval (Add l r) = liftBinary addValues l r
+eval (Sub l r) = liftBinary subValues l r
+eval (Mul l r) = liftBinary mulValues l r
+eval (Div l r) = liftBinary divValues l r
+eval (Pow l r) = liftBinary powValues l r
+eval (Mod l r) = liftBinary modValues l r
+eval (Concat l r) = liftBinary concatValues l r

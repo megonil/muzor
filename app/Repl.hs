@@ -1,6 +1,8 @@
 module Repl where
 
-import Data.Text as T
+import Control.Monad (liftM)
+import qualified Data.Text as T
+import Error (extractTrap, extractValue, trapError)
 import Eval
 import Parser
 import System.Console.ANSI
@@ -17,11 +19,14 @@ readPrompt = do
   setSGR [Reset]
   flushS "> " >> getLine
 
-evalString :: String -> IO ()
+evalString :: String -> IO String
 evalString expr = do
   case runParserString (T.pack expr) of
-    Left err -> putStrLn (errorBundlePretty err)
-    Right ast -> print $ eval ast
+    Left err -> return $ errorBundlePretty err
+    Right ast -> pure $ either show show (eval ast)
+
+printEvaluate :: String -> IO ()
+printEvaluate expr = evalString expr >>= putStrLn
 
 until_ :: (Monad m) => (t -> Bool) -> m t -> (t -> m a) -> m ()
 until_ predicate prompt action = do
@@ -31,4 +36,4 @@ until_ predicate prompt action = do
     else action result >> until_ predicate prompt action
 
 runRepl :: IO ()
-runRepl = until_ (== ":q") (readPrompt) (evalString)
+runRepl = until_ (== ":q") (readPrompt) (printEvaluate)
