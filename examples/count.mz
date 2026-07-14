@@ -1,0 +1,3 @@
+fn main | World | is
+  loop 1..=World.argc
+    result += 1
